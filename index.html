@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang='ja'>
+<head>
+  <meta charset='utf-8'>
+  <title>StopWatch</title>
+  <style type='text/css'>
+    #display {
+      height: 20px
+    }
+  </style>
+</head>
+<body>
+  <h1>StopWatch</h1>
+  <div id='display'></div>
+  <div id='actions'>
+    <button id='start'>START</button>
+    <button id='stop'>STOP</button>
+    <button id='reset'>RESET</button>
+  </div>
+    <script type='text/javascript' src='./stopwatch.js'></script>
+    <script type='text/javascript'>
+      var stopWatch = new StopWatch();
+      var displayIntervalID = 0;
+      document.getElementById('start').addEventListener('click', function(){
+        stopWatch.start();//.bind(stopWatch)
+        displayIntervalID = setInterval(function(){
+          document.getElementById('display').innerHTML = stopWatch.time/1000
+        } ,stopWatch.interval);
+      });
+      document.getElementById('stop').addEventListener('click', function(){
+        stopWatch.stop();//.bind(stopWatch);
+        clearInterval(displayIntervalID);
+      });
+      document.getElementById('reset').addEventListener('click', function(){
+        if (displayIntervalID !== 0) {
+          stopWatch.stop();
+          clearInterval(displayIntervalID);
+        };
+        stopWatch.reset();//.bind(stopWatch));
+        document.getElementById('display').innerHTML = 0;
+      });
+    </script>
+</body>
