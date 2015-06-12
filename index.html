@@ -5,7 +5,7 @@
   <title>StopWatch</title>
   <style type='text/css'>
     #display {
-      height: 20px
+      height: 20px;
     }
   </style>
 </head>
@@ -15,29 +15,61 @@
   <div id='actions'>
     <button id='start'>START</button>
     <button id='stop'>STOP</button>
+    <button id='lap'>LAP</button>
     <button id='reset'>RESET</button>
   </div>
     <script type='text/javascript' src='./stopwatch.js'></script>
     <script type='text/javascript'>
-      var stopWatch = new StopWatch();
-      var displayIntervalID = 0;
-      document.getElementById('start').addEventListener('click', function(){
-        stopWatch.start();//.bind(stopWatch)
-        displayIntervalID = setInterval(function(){
-          document.getElementById('display').innerHTML = stopWatch.time/1000
-        } ,stopWatch.interval);
-      });
-      document.getElementById('stop').addEventListener('click', function(){
-        stopWatch.stop();//.bind(stopWatch);
-        clearInterval(displayIntervalID);
-      });
-      document.getElementById('reset').addEventListener('click', function(){
-        if (displayIntervalID !== 0) {
-          stopWatch.stop();
-          clearInterval(displayIntervalID);
+      var StopWatchComponent = function(){
+        this.display = document.getElementById('display');
+        this.actions = document.getElementById('actions');
+        this.startBtn = document.getElementById('start');
+        this.stopBtn = document.getElementById('stop');
+        this.lapBtn = document.getElementById('lap');
+        this.resetBtn = document.getElementById('reset');
+        this.addEvent();
+      };
+      StopWatchComponent.prototype.renderTime = function(){
+          this.display.innerHTML = this.stopWatch.time/1000;
+      };
+      StopWatchComponent.prototype.renderRepeat = function(){
+        this.displayIntervalID = setInterval(this.renderTime.bind(this),this.stopWatch.interval);
+      };
+      StopWatchComponent.prototype.renderStop = function(){
+        clearInterval(this.displayIntervalID);
+      }
+      StopWatchComponent.prototype.start = function(){
+        this.stopWatch.start();
+        this.renderRepeat();
+      };
+      StopWatchComponent.prototype.stop = function(){
+        this.stopWatch.stop();
+        this.renderStop();
+      };
+      StopWatchComponent.prototype.lap = function(){
+        if (!this.stopWatch.lap()) return false;
+        this.renderRepeat();
+        console.log(this.stopWatch.times);
+        console.log(this.stopWatch.getTotalTime());
+      };
+      StopWatchComponent.prototype.reset = function(){
+        if (this.displayIntervalID !== 0) {
+          this.stopWatch.stop();
+          clearInterval(this.displayIntervalID);
         };
-        stopWatch.reset();//.bind(stopWatch));
-        document.getElementById('display').innerHTML = 0;
-      });
+        this.stopWatch.reset();
+        this.display.innerHTML = 0;
+      };
+      StopWatchComponent.prototype.addEvent = function(){
+        function hello(){
+          console.log('hello');
+        };
+        this.stopWatch = new StopWatch(hello, 3000);
+        this.startBtn.addEventListener('click', this.start.bind(this));
+        this.stopBtn.addEventListener('click', this.stop.bind(this));
+        this.lapBtn.addEventListener('click', this.lap.bind(this));
+        this.resetBtn.addEventListener('click', this.reset.bind(this));
+      };
+      var stopWatchComponent = new StopWatchComponent();
     </script>
 </body>
