@@ -7,63 +7,55 @@ Array.prototype.sum = function(){
   }
   return total;
 };
-var StopWatch = function(func, delay){
-  this.interval = 10;
-  this.init();
-  this.toID = setTimeout(function(){func()}, delay);
+
+var StopWatch = function(callback, callbackOn){
+  this.reset();
+  setTimeout(callback, callbackOn);
 };
-StopWatch.prototype.init = function(){
-  this.clearTime();
-  this.times = [];
-  this.isMove = false;
-};
-StopWatch.prototype.setTime = function(){
-  this.time += this.interval;
-};
-StopWatch.prototype.startTime = function(){
-  this.intervalID = setInterval(this.setTime.bind(this), this.interval);
-  this.isMove = true;
-};
-StopWatch.prototype.stopTime = function(){
-  clearInterval(this.intervalID);
-  this.isMove = false;
-};
-StopWatch.prototype.clearTime = function(){
-  this.time = 0;
-};
-StopWatch.prototype.stockTime = function(){
-  this.times.push(this.time);
-  this.clearTime();
-};
+
+// public methods
 StopWatch.prototype.start = function(){
-  if (this.isMove) return false;
-  this.startTime();
+  if (this.isActive) return false;
+  this.startProcess();
   return true;
 };
 StopWatch.prototype.stop = function(){
-  if (!this.isMove) return false;
-  this.stopTime();
+  if (!this.isActive) return false;
+  this.stopProcess();
   return true;
 };
 StopWatch.prototype.reset = function(){
-  this.init();
-  return true;
+  this.clearProcess();
+  this.lapTimes = [];
+  this.isActive = false;
 };
 StopWatch.prototype.lap = function(){
-  if (this.isMove){
-    this.stopTime();
-    this.stockTime();
-    this.startTime();
+  if (this.isActive){
+    this.addLapTime();
     return true;
-  } else {
-    if (this.time !== 0){
-      this.stockTime();
-      this.startTime();
-      return true;
-    }
   }
   return false;
 };
 StopWatch.prototype.getTotalTime = function(){
-  return this.times.sum();
+  return this.lapTimes.sum();
+};
+
+// private methods
+StopWatch.prototype.addProcess = function(){
+  this.processTime += 10;
+};
+StopWatch.prototype.startProcess = function(){
+  this.intervalID = setInterval(this.addProcess.bind(this), 10);
+  this.isActive = true;
+};
+StopWatch.prototype.stopProcess = function(){
+  clearInterval(this.intervalID);
+  this.isActive = false;
+};
+StopWatch.prototype.clearProcess = function(){
+  this.processTime = 0;
+};
+StopWatch.prototype.addLapTime = function(){
+  this.lapTimes.push(this.processTime);
+  this.clearProcess();
 };

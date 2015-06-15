@@ -30,32 +30,28 @@
         this.addEvent();
       };
       StopWatchComponent.prototype.renderTime = function(){
-          this.display.innerHTML = this.stopWatch.time/1000;
+          this.display.innerHTML = this.stopWatch.processTime/1000;
       };
-      StopWatchComponent.prototype.renderRepeat = function(){
-        this.displayIntervalID = setInterval(this.renderTime.bind(this),this.stopWatch.interval);
+      StopWatchComponent.prototype.rerender = function(){
+        this.timerID = setInterval(this.renderTime.bind(this),1);
       };
-      StopWatchComponent.prototype.renderStop = function(){
-        clearInterval(this.displayIntervalID);
-      }
       StopWatchComponent.prototype.start = function(){
-        this.stopWatch.start();
-        this.renderRepeat();
+        if (!this.stopWatch.start()) return false;
+        this.rerender();
       };
       StopWatchComponent.prototype.stop = function(){
-        this.stopWatch.stop();
-        this.renderStop();
+        if (!this.stopWatch.stop()) return false;
+        clearInterval(this.timerID);
       };
       StopWatchComponent.prototype.lap = function(){
         if (!this.stopWatch.lap()) return false;
-        this.renderRepeat();
-        console.log(this.stopWatch.times);
+        this.rerender();
+        console.log(this.stopWatch.lapTimes);
         console.log(this.stopWatch.getTotalTime());
       };
       StopWatchComponent.prototype.reset = function(){
-        if (this.displayIntervalID !== 0) {
+        if (this.timerID !== 0) {
           this.stopWatch.stop();
-          clearInterval(this.displayIntervalID);
         };
         this.stopWatch.reset();
         this.display.innerHTML = 0;
