@@ -45,7 +45,6 @@
       };
       StopWatchComponent.prototype.lap = function(){
         if (!this.stopWatch.lap()) return false;
-        this.rerender();
         console.log(this.stopWatch.lapTimes);
         console.log(this.stopWatch.getTotalTime());
       };

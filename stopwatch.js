@@ -42,14 +42,16 @@ StopWatch.prototype.getTotalTime = function(){
 
 // private methods
 StopWatch.prototype.addProcess = function(){
-  this.processTime += 10;
+  this.processTime = Date.now() - this.startTime;
+  this.timeoutID = setTimeout(this.addProcess.bind(this), 1);
 };
 StopWatch.prototype.startProcess = function(){
-  this.intervalID = setInterval(this.addProcess.bind(this), 10);
+  this.startTime = Date.now() - this.processTime;
+  this.addProcess();
   this.isActive = true;
 };
 StopWatch.prototype.stopProcess = function(){
-  clearInterval(this.intervalID);
+  clearTimeout(this.timeoutID);
   this.isActive = false;
 };
 StopWatch.prototype.clearProcess = function(){
@@ -57,5 +59,5 @@ StopWatch.prototype.clearProcess = function(){
 };
 StopWatch.prototype.addLapTime = function(){
   this.lapTimes.push(this.processTime);
-  this.clearProcess();
+  this.startTime = Date.now();
 };
